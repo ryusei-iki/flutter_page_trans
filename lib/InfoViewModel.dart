@@ -1,20 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
-class NoteViewModel {
+class InfoViewModel {
   static Future<void> createTables(sql.Database database) async {
     await database.execute("""CREATE TABLE items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        title TEXT,
-        description TEXT,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        currentLocation TEXT,
+        destination TEXT,
+        timeType TEXT
+        setTime TEXT,
+        luggage TEXT,
       )
       """);
   }
 
   static Future<sql.Database> db() async {
     return sql.openDatabase(
-      'note.db',
+      'info.db',
       version: 1,
       onCreate: (sql.Database database, int version) async {
         await createTables(database);
@@ -22,46 +23,67 @@ class NoteViewModel {
     );
   }
 
-  static Future<int> createItem(String title, String? descrption) async {
-    final db = await NoteViewModel.db();
+  // static Future<int> createItem(String currentLOcation, String destinaiton,
+  //     String tiemType, String setTime, String luggage) async {
+  //   final db = await InfoViewModel.db();
 
-    final data = {'title': title, 'description': descrption};
-    final id = await db.insert('items', data,
-        conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    return id;
-  }
+  //   final data = {'title': title, 'description': descrption};
+  //   final id = await db.insert('items', data,
+  //       conflictAlgorithm: sql.ConflictAlgorithm.replace);
+  //   return id;
+  // }
 
-  static Future<List<Map<String, dynamic>>> getNotes() async {
-    final db = await NoteViewModel.db();
-    return db.query('items', orderBy: "id");
-  }
-
-  static Future<List<Map<String, dynamic>>> getItem(int id) async {
-    final db = await NoteViewModel.db();
-    return db.query('items', where: "id = ?", whereArgs: [id], limit: 1);
-  }
-
-  static Future<int> updateItem(
-      int id, String title, String? descrption) async {
-    final db = await NoteViewModel.db();
-
+  static Future insertNote(String currentLOcation, String destinaiton,
+      String tiemType, String setTime, String luggage) async {
+    final db = await InfoViewModel.db();
     final data = {
-      'title': title,
-      'description': descrption,
-      'createdAt': DateTime.now().toString()
+      'currentLOcation': currentLOcation,
+      'destinaiton': destinaiton,
+      'tiemType': tiemType,
+      'setTime': luggage,
+      'luggage': luggage
     };
-
-    final result =
-        await db.update('items', data, where: "id = ?", whereArgs: [id]);
-    return result;
+    await db.insert(
+      'items',
+      data,
+    );
   }
 
-  static Future<void> deleteItem(int id) async {
-    final db = await NoteViewModel.db();
-    try {
-      await db.delete("items", where: "id = ?", whereArgs: [id]);
-    } catch (err) {
-      debugPrint("Something went wrong when deleting an item: $err");
-    }
+  // static Future<List<Map<String, dynamic>>> getNotes() async {
+  //   final db = await NoteViewModel.db();
+  //   return db.query('items', orderBy: "id");
+  // }
+  static Future<List<Map<String, dynamic>>> getNotes() async {
+    final db = await InfoViewModel.db();
+    return db.query('items');
   }
+
+  // static Future<List<Map<String, dynamic>>> getItem(int id) async {
+  //   final db = await NoteViewModel.db();
+  //   return db.query('items', where: "id = ?", whereArgs: [id], limit: 1);
+  // }
+
+  // static Future<int> updateItem(
+  //     int id, String title, String? descrption) async {
+  //   final db = await NoteViewModel.db();
+
+  //   final data = {
+  //     'title': title,
+  //     'description': descrption,
+  //     'createdAt': DateTime.now().toString()
+  //   };
+
+  //   final result =
+  //       await db.update('items', data, where: "id = ?", whereArgs: [id]);
+  //   return result;
+  // }
+
+  // static Future<void> deleteItem(int id) async {
+  //   final db = await NoteViewModel.db();
+  //   try {
+  //     await db.delete("items", where: "id = ?", whereArgs: [id]);
+  //   } catch (err) {
+  //     debugPrint("Something went wrong when deleting an item: $err");
+  //   }
+  // }
 }
