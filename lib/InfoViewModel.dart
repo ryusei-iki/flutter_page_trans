@@ -4,18 +4,19 @@ import 'package:sqflite/sqflite.dart' as sql;
 class InfoViewModel {
   static Future<void> createTables(sql.Database database) async {
     await database.execute("""CREATE TABLE items(
+        _id INTEGER PRIMARY KEY AUTOINCREMENT,
         currentLocation TEXT,
         destination TEXT,
-        timeType TEXT
+        timeType TEXT,
         setTime TEXT,
-        luggage TEXT,
+        luggage TEXT
       )
       """);
   }
 
   static Future<sql.Database> db() async {
     return sql.openDatabase(
-      'info.db',
+      'info9.db',
       version: 1,
       onCreate: (sql.Database database, int version) async {
         await createTables(database);
@@ -33,14 +34,14 @@ class InfoViewModel {
   //   return id;
   // }
 
-  static Future insertNote(String currentLOcation, String destinaiton,
-      String tiemType, String setTime, String luggage) async {
+  static Future insertItem(String currentLocation, String destination,
+      String timeType, String setTime, String luggage) async {
     final db = await InfoViewModel.db();
     final data = {
-      'currentLOcation': currentLOcation,
-      'destinaiton': destinaiton,
-      'tiemType': tiemType,
-      'setTime': luggage,
+      'currentLocation': currentLocation,
+      'destination': destination,
+      'timeType': timeType,
+      'setTime': setTime,
       'luggage': luggage
     };
     await db.insert(
