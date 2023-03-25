@@ -101,17 +101,19 @@ class _MyHomePage extends State<MyHomePage> {
             onPressed: () async {
               // "push"で新規画面に遷移
               // リスト追加画面から渡される値を受け取る
-              final newListText = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  // 遷移先の画面としてリスト追加画面を指定
-                  return MyHomePage(
-                    title: '現在地と目的地!',
-                  );
-                }),
-              );
-              if (newListText != null) {
-                // キャンセルした場合は newListText が null となるので注意
-              }
+              // final newListText = await Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) {
+              //     // 遷移先の画面としてリスト追加画面を指定
+              //     return MyHomePage(
+              //       title: '現在地と目的地!',
+              //     );
+              //   }),
+              // );
+              // if (newListText != null) {
+              //   // キャンセルした場合は newListText が null となるので注意
+              // }
+              initState();
+              setState(() {});
             },
             icon: Icon(Icons.home), //アイコン
             label: Text('ホーム'), //テキスト
@@ -131,6 +133,9 @@ class _MyHomePage extends State<MyHomePage> {
               );
               if (newListText != null) {
                 // キャンセルした場合は newListText が null となるので注意
+              } else {
+                _refreshJournals();
+                setState(() {});
               }
             },
             child: Column(
