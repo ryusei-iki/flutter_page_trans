@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'destination.dart';
 import 'setting.dart';
+import 'InfoViewModel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,30 +41,79 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePage extends State<MyHomePage> {
+  List<Map<String, dynamic>> _info = [];
+  bool _isLoading = true;
+
+  void _refreshJournals() async {
+    final data = await InfoViewModel.getNotes();
+    // print('================');
+    // print(data);
+    // print(data.runtimeType);
+    print(data);
+    print('-----------------------');
+    setState(() {
+      _info = data;
+      _isLoading = false;
+    });
+    // print(data[0]);
+    // print(_info[1]);
+  }
+
+  var index_test = 1;
+  var _id = 10;
+  void _showForm() async {
+    print('aaaa======================');
+    await _addItem();
+  }
+
+  Future<void> _addItem() async {
+    // print(_id);
+    await InfoViewModel.insertItem('a', 'b', 'c', 'd', 'e');
+    // _id = _id + 10;
+    _refreshJournals();
+  }
+
+  @override
+  void initState() {
+    print('11111111111111111111111');
+    super.initState();
+    _refreshJournals();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('MyHomePage'),
       ),
-      body: Container(child: Text('Homeのページ．予定がここで確認できる')),
+      body: _isLoading
+          ? const Center(child: Text('aa'))
+          : ListView.builder(
+              itemCount: _info.length,
+              itemBuilder: (context, index) {
+                return Text(_info[index]['destination']);
+                // return Text('aa');
+              },
+            ),
       persistentFooterButtons: <Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           ElevatedButton.icon(
             onPressed: () async {
               // "push"で新規画面に遷移
               // リスト追加画面から渡される値を受け取る
-              final newListText = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  // 遷移先の画面としてリスト追加画面を指定
-                  return MyHomePage(
-                    title: '現在地と目的地!',
-                  );
-                }),
-              );
-              if (newListText != null) {
-                // キャンセルした場合は newListText が null となるので注意
-              }
+              // final newListText = await Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) {
+              //     // 遷移先の画面としてリスト追加画面を指定
+              //     return MyHomePage(
+              //       title: '現在地と目的地!',
+              //     );
+              //   }),
+              // );
+              // if (newListText != null) {
+              //   // キャンセルした場合は newListText が null となるので注意
+              // }
+              initState();
+              setState(() {});
             },
             icon: Icon(Icons.home), //アイコン
             label: Text('ホーム'), //テキスト
@@ -83,6 +133,9 @@ class _MyHomePage extends State<MyHomePage> {
               );
               if (newListText != null) {
                 // キャンセルした場合は newListText が null となるので注意
+              } else {
+                _refreshJournals();
+                setState(() {});
               }
             },
             child: Column(
@@ -125,7 +178,14 @@ class _MyHomePage extends State<MyHomePage> {
                 ),
               ),
             ),
-          )
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              _addItem();
+            },
+            icon: Icon(Icons.home), //アイコン
+            label: Text('DBテストボタン'), //テキスト
+          ),
         ]),
       ],
     );

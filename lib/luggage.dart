@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'settingtime.dart';
+import 'InfoViewModel.dart';
+import 'main.dart';
 
 class Luggage extends StatefulWidget {
   final String title;
@@ -39,6 +41,15 @@ class _Luggage extends State<Luggage> {
     stateDestination = widget.destination;
     stateTimeType = widget.timeType;
     stateSetTime = widget.setTime;
+  }
+
+  Future<void> _addItem(stateCurrentLocation, stateDestination, stateTimeType,
+      stateSetTime, luggage) async {
+    // print(_id);
+    await InfoViewModel.insertItem(stateCurrentLocation, stateDestination,
+        stateTimeType, stateSetTime, luggage);
+    // _id = _id + 10;
+    // _refreshJournals();
   }
 
   @override
@@ -94,9 +105,29 @@ class _Luggage extends State<Luggage> {
               print(stateTimeType);
               print(stateSetTime);
               print(luggage);
+              _addItem(stateCurrentLocation, stateDestination, stateTimeType,
+                  stateSetTime, luggage);
               // "push"で新規画面に遷移
               // リスト追加画面から渡される値を受け取る
               Navigator.of(context).popUntil((route) => route.isFirst);
+              // final newListText = await Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) {
+              //     // 遷移先の画面としてリスト追加画面を指定
+              //     return MyHomePage(
+              //       title: '時間入力画面',
+              //     );
+              //   }),
+              // );
+              // if (newListText != null) {
+              //   // キャンセルした場合は newListText が null となるので注意
+              // }
+              // Navigator.of(context).pushNamedAndRemoveUntil(
+              //     "/sub1page", ModalRoute.withName("/home"));
+              //     Navigator.of(context).pushNamedAndRemoveUntil(
+              //       ()=>MaterialPageRoute(builder: (context)) {
+              //         return MyHomePage(title:'title');},
+              //         (_)=>false
+              //         );
             },
           ),
         ]));
